@@ -1,4 +1,7 @@
 package jcolonia.daw2025.tablasmvc;
+
+import java.util.List;
+
 /**
 * Núcleo de aplicación de consola de texto con menús. Aplicación
 * de texto usando tablas de multiplicar infantiles clásicas. 
@@ -10,6 +13,9 @@ public class ControlTablaMultiplicar {
 	public static final String FORMATO_RUTA_ARCHIVO_EXPORTACIÓN=
 		"tabla del %02d.txt";
 	
+	/** Opciones del menú principal */
+	public static final String[] OPCIONES_MENÚ_PRINCIPAL = {"Mostrar tabla", "Cambiar tabla", "Exportar tabla"};
+
 	/** Tabla de multiplicar activa. */
 	private TablaMultiplicar tabla;
 
@@ -68,7 +74,11 @@ public class ControlTablaMultiplicar {
 	* Muestra por pantalla -envía a la salida estándar-
 	* los productos correspondientes a la tabla activa.
 	*/
-	private void mostrarTabla(){}
+	private void mostrarTabla(){
+		if(tabla != null) {
+			VistaGeneral.mostrarLista(tabla.toListaPantalla());
+		}
+	}
 	
 	/**
 	* Cambia la tabla activa por otra elegida por el usuario.
@@ -76,7 +86,8 @@ public class ControlTablaMultiplicar {
 	private void cambiarTabla(){
 		int n;
 		
-		VistaGeneral.pedirNúmero("Introduzca el número para la tabla");
+		// Corregido: sin tilde para que coincida con VistaGeneral
+		n = VistaGeneral.pedirNumero("Introduzca el número para la tabla");
 		
 		tabla=new TablaMultiplicar(n);
 		tabla.generarTabla();
@@ -86,15 +97,19 @@ public class ControlTablaMultiplicar {
 	* Envía a un archivo
 	* los productos correspondientes a la tabla activa.
 	*/
-	private void exportarTabla(){}
+	private void exportarTabla(){
+		if(tabla != null) {
+			String nombre = String.format(FORMATO_RUTA_ARCHIVO_EXPORTACIÓN, tabla.getNumero());
+			ExportacionArchivo exp = new ExportacionArchivo(nombre);
+			exp.guardar(tabla.toListaExportacion());
+		}
+	}
 	
 	/**
 	 * Muestra un mensaje de aviso indicando que 
 	 * la opción elegida no está disponible.
 	*/
-	private void opciónNoDisponible(){}
-
-
-
-
+	private void opciónNoDisponible(){
+		VistaGeneral.mostrarAviso("Opción no disponible");
+	}
 }
